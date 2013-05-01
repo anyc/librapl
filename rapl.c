@@ -174,8 +174,8 @@ char rapl_pp1_available() {
 char rapl_dram_available() {
 	int cpu_id = rapl_get_cpu_model();
 	
-	if (cpu_id != 58) {
-		return 1;
+	if (cpu_id == 58) {
+		return 0;
 	}
-	return 0;
+	return 1;
 }

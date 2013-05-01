@@ -16,3 +16,7 @@ clean:
 
 run:
 	LD_LIBRARY_PATH=../ ./$(APP)
+
+gnuplot:
+	LD_LIBRARY_PATH=../ ./$(APP) 0 rapldata
+	gnuplot rapldata.gnuplot
