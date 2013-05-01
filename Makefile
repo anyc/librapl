@@ -1,4 +1,7 @@
 
+prefix ?= /usr/local
+libdir ?= lib
+
 CC ?= gcc
 
 CFLAGS ?= -g -Wall -O2
@@ -14,6 +17,9 @@ all: $(LIBNAME)
 
 $(LIBNAME): rapl.o
 	$(CC) $(LDFLAGS) -shared $< -o $@ $(LIBS)
+
+install:
+	install -m 0755 -D $(LIBNAME) $(DESTDIR)/$(prefix)/$(libdir)/$(LIBNAME)
 
 tools:
 	$(MAKE) -C tools

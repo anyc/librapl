@@ -12,7 +12,7 @@
  *
  * Usage with gnuplot:
  *
- *	LD_LIBRARY_PATH=../ ./rapl_dump [core_number] rapldata
+ *	LD_LIBRARY_PATH=../ ./rapl_dump <core_number> rapldata
  *	gnuplot rapldata.gnuplot
  *
  * Usage without gnuplot:

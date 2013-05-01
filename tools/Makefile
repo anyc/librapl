@@ -1,4 +1,7 @@
 
+prefix ?= /usr/local
+bindir ?= bin
+
 CC ?= gcc
 
 CFLAGS ?= -g -Wall -O2
@@ -14,6 +17,9 @@ $(APP): $(APP).o
 
 clean:
 	rm -f $(APP) *.o
+
+install:
+	install -m 0755 -D $(APP) $(DESTDIR)/$(prefix)/$(bindir)/$(APP)
 
 run:
 	LD_LIBRARY_PATH=../ ./$(APP)
