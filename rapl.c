@@ -162,11 +162,7 @@ char rapl_available() {
 	if (family == 6) {
 		switch (model) {
 			case 42:
-				return 1;
-				break;
 			case 45:
-				return 1;
-				break;
 			case 58:
 				return 1;
 				break;
@@ -208,13 +204,11 @@ void rapl_get_power_counters(int fd_msr, struct rapl_units * runits, struct rapl
 }
 
 void rapl_print_raw_power_counters (int fd_msr, struct rapl_units * runits) {
-	int cpu_id = rapl_get_cpu_model();
-	
 	RAPL_PRINT_ENERGY_STATUS(fd_msr, runits, MSR_PKG_ENERGY_STATUS);
 	RAPL_PRINT_ENERGY_STATUS(fd_msr, runits, MSR_PP0_ENERGY_STATUS);
 	RAPL_PRINT_ENERGY_STATUS(fd_msr, runits, MSR_PP1_ENERGY_STATUS);
 	
-	if (cpu_id != 58) {
+	if (rapl_dram_available()) {
 		RAPL_PRINT_ENERGY_STATUS(fd_msr, runits, MSR_DRAM_ENERGY_STATUS);
 	}
 }

@@ -3,14 +3,14 @@ CC ?= gcc
 
 CFLAGS ?= -g -Wall -O2
 CFLAGS += -I../
-LDFLAGS += -L../ -lrapl
+LIBS = -L../ -lrapl
 
 APP=rapl_dump
 
 all: $(APP)
 
 $(APP): $(APP).o
-	$(CC) $< -o $@ $(LDFLAGS)
+	$(CC) $(LDFLAGS) $< -o $@ $(LIBS)
 
 clean:
 	rm -f $(APP) *.o

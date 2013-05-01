@@ -8,14 +8,16 @@ LIBS=-lm
 
 LIBNAME=librapl.so
 
+.PHONY: clean tools
+
 all: $(LIBNAME)
 
 $(LIBNAME): rapl.o
 	$(CC) $(LDFLAGS) -shared $< -o $@ $(LIBS)
 
 tools:
-	cd tools
-	$(MAKE) $(MFLAGS)
+	$(MAKE) -C tools
 
 clean:
 	rm -f $(LIBNAME) *.o
+	$(MAKE) -C tools clean
