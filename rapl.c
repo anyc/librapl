@@ -1,10 +1,23 @@
-
-// http://web.eece.maine.edu/~vweaver/projects/rapl/
-// 
-// from https://github.com/razvanlupusoru/Intel-RAPL-via-Sysfs/blob/master/intel_rapl_power.c
+/*
+ *
+ * librapl
+ * -------
+ *
+ * librapl is a library that simplifies access to the RAPL values in
+ * MSR registers of modern Intel CPUs.
+ *
+ *  Author: Mario Kicherer (http://kicherer.org)
+ *  License: GPL v2 (http://www.gnu.org/licenses/gpl-2.0.txt)
+ *
+ * Based on work from:
+ * 	http://web.eece.maine.edu/~vweaver/projects/rapl/
+ * 	https://github.com/razvanlupusoru/Intel-RAPL-via-Sysfs/
+ *
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -100,7 +113,7 @@ void rapl_print_pkg_power_info(struct rapl_pkg_power_info * pinfo) {
 	printf("Package maximum time window: %.3f s\n", pinfo->time_window);
 }
 
-// stackoverflow.com/questions/6491566/getting-machine-serial-number-and-cpu-id-using-c-c-in-linux
+// see http://stackoverflow.com/questions/6491566/getting-machine-serial-number-and-cpu-id-using-c-c-in-linux
 int rapl_get_cpu_model() {
 	unsigned int eax, ebx, ecx, edx;
 	
@@ -123,7 +136,46 @@ int rapl_get_cpu_model() {
 	return (((eax >> 16) & 0xF)<<4) + ((eax >> 4) & 0xF);
 }
 
-void rapl_get_power_counters(int fd_msr, struct rapl_units * runits, struct rapl_power_counters * pc) {
+char rapl_available() {
+	unsigned int eax, ebx, ecx, edx;
+	
+	eax = 1; ecx = 0;
+	/* ecx is often an input as well as an output. */
+	asm volatile("cpuid"
+		: "=a" (eax),
+		"=b" (ebx),
+		"=c" (ecx),
+		"=d" (edx)
+		: "0" (eax), "2" (ecx));
+	
+	int model = (((eax >> 16) & 0xF)<<4) + ((eax >> 4) & 0xF);
+	int family = ((eax >> 8) & 0xF);
+	
+	
+	/*
+	 * 06_2A : Intel Core Sandy Bridge
+	 * 06_2D : Intel Xeon Sandy Bridge
+	 * 06_3A : Intel Core Ivy Bridge
+	 */
+	
+	
+	if (family == 6) {
+		switch (model) {
+			case 42:
+				return 1;
+				break;
+			case 45:
+				return 1;
+				break;
+			case 58:
+				return 1;
+				break;
+		}
+	}
+	return 0;
+}
+
+void rapl_get_raw_power_counters(int fd_msr, struct rapl_units * runits, struct rapl_raw_power_counters * pc) {
 	long long data;
 	
 	if (rapl_read_msr(fd_msr, MSR_PKG_ENERGY_STATUS, &data)) {
@@ -147,7 +199,15 @@ void rapl_get_power_counters(int fd_msr, struct rapl_units * runits, struct rapl
 		pc->dram = -1;
 }
 
-void rapl_print_power_counters (int fd_msr, struct rapl_units * runits) {
+void rapl_get_power_counters(int fd_msr, struct rapl_units * runits, struct rapl_power_counters * pc) {
+	struct rapl_raw_power_counters raw;
+	rapl_get_raw_power_counters(fd_msr, runits, &raw);
+	
+	memcpy(pc, &raw, sizeof(raw));
+	pc->uncore = pc->pkg - ( pc->cpu + pc->gpu );
+}
+
+void rapl_print_raw_power_counters (int fd_msr, struct rapl_units * runits) {
 	int cpu_id = rapl_get_cpu_model();
 	
 	RAPL_PRINT_ENERGY_STATUS(fd_msr, runits, MSR_PKG_ENERGY_STATUS);
@@ -168,14 +228,24 @@ char rapl_pp0_available() {
 }
 
 char rapl_pp1_available() {
+	int cpu_id = rapl_get_cpu_model();
+	
+	if (cpu_id == 45)
+		return 0;
+	
 	return 1;
 }
 
 char rapl_dram_available() {
 	int cpu_id = rapl_get_cpu_model();
 	
-	if (cpu_id == 58) {
+	if (cpu_id == 42 || cpu_id == 58) {
 		return 0;
 	}
+	
 	return 1;
+}
+
+char rapl_uncore_available() {
+	return rapl_pkg_available() && rapl_pp0_available() && rapl_pp1_available();
 }

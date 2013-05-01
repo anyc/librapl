@@ -1,8 +1,8 @@
 
 CC ?= gcc
 
-EXTRA_CFLAGS=-fPIC
-CFLAGS += $(EXTRA_CFLAGS)
+CFLAGS ?= -g -Wall -O2
+CFLAGS += -fPIC
 
 LIBS=-lm
 

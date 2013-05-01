@@ -2,10 +2,19 @@
 #ifndef RAPL_H
 #define RAPL_H
 
-/* 06_2AH : Intel Core Sandy Bridge
- * 06_2DH : Intel Xeon Sandy Bridge **/
+/*
+ *
+ * librapl
+ * -------
+ *
+ * librapl is a library that simplifies access to the RAPL values in
+ * MSR registers of modern Intel CPUs.
+ *
+ *  Author: Mario Kicherer (http://kicherer.org)
+ *  License: GPL v2 (http://www.gnu.org/licenses/gpl-2.0.txt)
+ *
+ */
 
-/* MSRs that are supported on both 062A and 062D */
 #define MSR_RAPL_POWER_UNIT 0x606
 
 #define MSR_PKG_RAPL_POWER_LIMIT 0x610
@@ -60,11 +69,19 @@ struct rapl_pkg_power_info {
 	double time_window;
 };
 
-struct rapl_power_counters {
+struct rapl_raw_power_counters {
 	double pkg;
 	double pp0;
 	double pp1;
 	double dram;
+};
+
+struct rapl_power_counters {
+	double pkg;
+	double cpu;
+	double gpu;
+	double dram;
+	double uncore;
 };
 
 #define RAPL_GET_ENERGY_STATUS(fd_msr, runits, ID) \
@@ -77,6 +94,8 @@ int rapl_open_msr(char core);
 long long rapl_get_msr(int fd_msr, int offset);
 char rapl_read_msr(int fd_msr, int offset, long long * buf);
 
+char rapl_available();
+
 char rapl_get_units(int fd_msr, struct rapl_units * ru);
 void rapl_print_units(struct rapl_units * ru);
 
@@ -85,11 +104,15 @@ void rapl_print_pkg_power_info(struct rapl_pkg_power_info * pinfo);
 
 int rapl_get_cpu_model();
 
+void rapl_get_raw_power_counters(int fd_msr, struct rapl_units * runits, struct rapl_raw_power_counters * pc);
+void rapl_print_raw_power_counters (int fd_msr, struct rapl_units * runits);
+
 void rapl_get_power_counters(int fd_msr, struct rapl_units * runits, struct rapl_power_counters * pc);
 
 char rapl_pkg_available();
 char rapl_pp0_available();
 char rapl_pp1_available();
 char rapl_dram_available();
+char rapl_uncore_available();
 
 #endif
