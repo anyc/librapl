@@ -53,6 +53,7 @@ int rapl_open_msr(char core) {
 	return fd_msr;
 }
 
+// get value at offset. Returns 0 on error.
 long long rapl_get_msr(int fd_msr, int offset) {
 	long long buf;
 	
@@ -63,19 +64,19 @@ long long rapl_get_msr(int fd_msr, int offset) {
 	return buf;
 }
 
+// get value at offset. Returns 1 on success, 0 on error.
 char rapl_read_msr(int fd_msr, int offset, long long * buf) {
-	if (pread(fd_msr, buf, sizeof(long long), offset) != sizeof(long long)) {
+	if (pread(fd_msr, buf, sizeof(long long), offset) != sizeof(long long))
 		return 0;
-	}
+	
 	return 1;
 }
 
 char rapl_get_units(int fd_msr, struct rapl_units * ru) {
 	long long data;
 	
-	if (!rapl_read_msr(fd_msr, MSR_RAPL_POWER_UNIT, &data)) {
+	if (!rapl_read_msr(fd_msr, MSR_RAPL_POWER_UNIT, &data))
 		return 0;
-	}
 	
 	ru->power_units= pow(0.5,(double)( (data>>RAPL_POWER_UNIT_OFFSET)  & RAPL_POWER_UNIT_MASK ) );
 	ru->energy_units=pow(0.5,(double)( (data>>RAPL_ENERGY_UNIT_OFFSET) & RAPL_ENERGY_UNIT_MASK ) );
@@ -94,9 +95,8 @@ void rapl_print_units(struct rapl_units * ru) {
 char rapl_get_pkg_power_info(int fd_msr, struct rapl_units * ru, struct rapl_pkg_power_info * pinfo) {
 	long long data;
 	
-	if (!rapl_read_msr(fd_msr, MSR_PKG_POWER_INFO, &data)) {
+	if (!rapl_read_msr(fd_msr, MSR_PKG_POWER_INFO, &data))
 		return 0;
-	}
 	
 	pinfo->thermal_spec_power=ru->power_units*(double)((data>>RAPL_THERMAL_SPEC_POWER_OFFSET) & RAPL_THERMAL_SPEC_POWER_MASK);
 	pinfo->minimum_power=     ru->power_units*(double)((data>>RAPL_MINIMUM_POWER_OFFSET)      & RAPL_MINIMUM_POWER_MASK);
@@ -174,24 +174,24 @@ char rapl_available() {
 void rapl_get_raw_power_counters(int fd_msr, struct rapl_units * runits, struct rapl_raw_power_counters * pc) {
 	long long data;
 	
-	if (rapl_read_msr(fd_msr, MSR_PKG_ENERGY_STATUS, &data)) {
+	if (rapl_read_msr(fd_msr, MSR_PKG_ENERGY_STATUS, &data))
 		pc->pkg = (double)data  * runits->energy_units;
-	} else
+	else
 		pc->pkg = -1;
 	
-	if (rapl_read_msr(fd_msr, MSR_PP0_ENERGY_STATUS, &data)) {
+	if (rapl_read_msr(fd_msr, MSR_PP0_ENERGY_STATUS, &data))
 		pc->pp0 = (double)data  * runits->energy_units;
-	} else
+	else
 		pc->pp0 = -1;
 	
-	if (rapl_read_msr(fd_msr, MSR_PP1_ENERGY_STATUS, &data)) {
+	if (rapl_read_msr(fd_msr, MSR_PP1_ENERGY_STATUS, &data))
 		pc->pp1 = (double)data  * runits->energy_units;
-	} else
+	else
 		pc->pp1 = -1;
 	
-	if (rapl_read_msr(fd_msr, MSR_DRAM_ENERGY_STATUS, &data)) {
+	if (rapl_read_msr(fd_msr, MSR_DRAM_ENERGY_STATUS, &data))
 		pc->dram = (double)data  * runits->energy_units;
-	} else
+	else
 		pc->dram = -1;
 }
 
