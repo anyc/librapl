@@ -117,7 +117,7 @@ void rapl_print_pkg_power_info(struct rapl_pkg_power_info * pinfo) {
 }
 
 // see http://stackoverflow.com/questions/6491566/getting-machine-serial-number-and-cpu-id-using-c-c-in-linux
-int rapl_get_cpu_model() {
+int rapl_get_cpu_id() {
 	unsigned int eax, ebx, ecx, edx;
 	
 	eax = 1; ecx = 0;
@@ -136,24 +136,23 @@ int rapl_get_cpu_model() {
 // 	printf("extended model %d\n", (eax >> 16) & 0xF);
 // 	printf("extended family %d\n", (eax >> 20) & 0xFF);
 	
+	return eax;
+}
+
+int rapl_get_cpu_model() {
+	unsigned int eax;
+	
+	eax = rapl_get_cpu_id();
 	return (((eax >> 16) & 0xF)<<4) + ((eax >> 4) & 0xF);
 }
 
 char rapl_available() {
-	unsigned int eax, ebx, ecx, edx;
+	unsigned int eax;
 	
-	eax = 1; ecx = 0;
-	/* ecx is often an input as well as an output. */
-	asm volatile("cpuid"
-		: "=a" (eax),
-		"=b" (ebx),
-		"=c" (ecx),
-		"=d" (edx)
-		: "0" (eax), "2" (ecx));
+	eax = rapl_get_cpu_id();
 	
 	int model = (((eax >> 16) & 0xF)<<4) + ((eax >> 4) & 0xF);
 	int family = ((eax >> 8) & 0xF);
-	
 	
 	/*
 	 * 06_2A : Intel Core Sandy Bridge

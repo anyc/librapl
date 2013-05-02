@@ -47,7 +47,17 @@ int main(int argc, char ** argv) {
 		mode = argv[2];
 	
 	if (!rapl_available()) {
-		printf("Warning: your CPU is not in the list of known models.\nThe output might be incorrect!\n\n");
+		unsigned int eax;
+		
+		eax = rapl_get_cpu_id();
+		int family = ((eax >> 8) & 0xF);
+		
+		int model = rapl_get_cpu_model();
+		
+		printf("Warning: your CPU (%d %x) is not in the list of known models.\n", family, model);
+		printf("         The output might be incorrect!\n");
+		printf("If your CPU supports RAPL please open an issue at https://github.com/anyc/librapl\n");
+		printf("with the output of this tool.\n\n");
 		sleep(5);
 	}
 	

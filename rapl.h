@@ -96,6 +96,8 @@ int rapl_open_msr(char core);
 unsigned long long rapl_get_msr(int fd_msr, int offset);
 char rapl_read_msr(int fd_msr, int offset, unsigned long long * buf);
 
+int rapl_get_cpu_id();
+int rapl_get_cpu_model();
 char rapl_available();
 
 char rapl_get_units(int fd_msr, struct rapl_units * ru);
