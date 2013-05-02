@@ -1,0 +1,9 @@
+prefix=%prefix%
+libdir=${prefix}/%libdir%
+includedir=${prefix}/%incdir%
+
+Name: librapl
+Description: Simplified access to RAPL values in MSR registers of Intel CPUs
+Version: 0.1
+Cflags: -I${includedir}
+Libs: -L${libdir} -lrapl

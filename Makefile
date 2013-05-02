@@ -1,6 +1,7 @@
 
 prefix ?= /usr/local
 libdir ?= lib
+incdir ?= include
 
 CC ?= gcc
 
@@ -20,6 +21,11 @@ $(LIBNAME): rapl.o
 
 install:
 	install -m 0755 -D $(LIBNAME) $(DESTDIR)/$(prefix)/$(libdir)/$(LIBNAME)
+	install -m 0644 -D rapl.h $(DESTDIR)/$(prefix)/$(incdir)/rapl.h
+	cat librapl.pc.skel | sed "s/%prefix%/$(subst /,\/,$(prefix))/;\
+		s/%libdir%/$(subst /,\/,$(libdir))/; \
+		s/%incdir%/$(subst /,\/,$(incdir))/" > librapl.pc
+	install -m 0644 -D librapl.pc $(DESTDIR)/$(prefix)/$(libdir)/pkgconfig/librapl.pc
 
 tools:
 	$(MAKE) -C tools

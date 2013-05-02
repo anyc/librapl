@@ -16,6 +16,9 @@
  * See also:
  * 	Intel 64 and IA-32 Architectures Software Developer's Manual,
  * 	Volume 3B: System Programming Guide, Part 2, chapter 14.7
+ *
+ * Other approaches:
+ * 	https://github.com/tpatki/librapl/tree/master/libmsr
  */
 
 #include <stdio.h>
