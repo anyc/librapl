@@ -17,6 +17,8 @@
 
 #define MSR_RAPL_POWER_UNIT 0x606
 
+#define MSR_ENERGY_STATUS_MASK 0xffffffff
+
 #define MSR_PKG_RAPL_POWER_LIMIT 0x610
 #define MSR_PKG_ENERGY_STATUS 0x611
 #define MSR_PKG_PERF_STATUS 0x613
@@ -91,8 +93,8 @@ struct rapl_power_counters {
 	{printf(#ID ": %f\n", RAPL_GET_ENERGY_STATUS(fd_msr, runits, ID));}
 
 int rapl_open_msr(char core);
-long long rapl_get_msr(int fd_msr, int offset);
-char rapl_read_msr(int fd_msr, int offset, long long * buf);
+unsigned long long rapl_get_msr(int fd_msr, int offset);
+char rapl_read_msr(int fd_msr, int offset, unsigned long long * buf);
 
 char rapl_available();
 
