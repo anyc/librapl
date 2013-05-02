@@ -149,10 +149,9 @@ int main(int argc, char ** argv) {
 				printf("GPU: %f J\n", curr.gpu - last.gpu);
 			if (rapl_dram_available())
 				printf("DRAM: %f J\n", curr.dram - last.dram);
+			if (rapl_uncore_available())
+				printf("Uncore: %f J\n", curr.uncore - last.uncore);
 			
-			if (rapl_pkg_available() && rapl_pp0_available() && rapl_pp1_available()) {
-				printf("Uncore: %f J\n", (curr.pkg - last.pkg) - ( (curr.cpu - last.cpu) + (curr.gpu - last.gpu)));
-			}
 			printf("\n");
 			
 			last = curr;
@@ -173,10 +172,9 @@ int main(int argc, char ** argv) {
 				fprintf(f, "%f ", curr.gpu - last.gpu);
 			if (rapl_dram_available())
 				fprintf(f, "%f ", curr.dram - last.dram);
+			if (rapl_uncore_available())
+				fprintf(f, "%f", curr.uncore - last.uncore);
 			
-			if (rapl_pkg_available() && rapl_pp0_available() && rapl_pp1_available()) {
-				fprintf(f, "%f", (curr.pkg - last.pkg) - ( (curr.cpu - last.cpu) + (curr.gpu - last.gpu)));
-			}
 			fprintf(f, "\n");
 			fflush(f);
 			

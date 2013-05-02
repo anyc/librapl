@@ -16,6 +16,6 @@ for an example created with Gnuplot.
 Status
 ------
 
-Currently, the library is only tested with one IvyBridge CPU. Please
-send me an email or open an issue if you got results with SandyBridge
-or newer CPUs.
+Currently, the library only provides an interface for reading the energy
+consumption and it is only tested with an IvyBridge CPU. Please send me an
+email or open an issue if you got results with SandyBridge or newer CPUs.

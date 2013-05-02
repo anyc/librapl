@@ -13,6 +13,9 @@
  * 	http://web.eece.maine.edu/~vweaver/projects/rapl/
  * 	https://github.com/razvanlupusoru/Intel-RAPL-via-Sysfs/
  *
+ * See also:
+ * 	Intel 64 and IA-32 Architectures Software Developer's Manual,
+ * 	Volume 3B: System Programming Guide, Part 2, chapter 14.7
  */
 
 #include <stdio.h>
@@ -161,9 +164,9 @@ char rapl_available() {
 	
 	if (family == 6) {
 		switch (model) {
-			case 42:
-			case 45:
-			case 58:
+			case 0x2a:
+			case 0x2d:
+			case 0x3a:
 				return 1;
 				break;
 		}
@@ -224,7 +227,7 @@ char rapl_pp0_available() {
 char rapl_pp1_available() {
 	int cpu_id = rapl_get_cpu_model();
 	
-	if (cpu_id == 45)
+	if (cpu_id == 0x2d)
 		return 0;
 	
 	return 1;
@@ -233,9 +236,8 @@ char rapl_pp1_available() {
 char rapl_dram_available() {
 	int cpu_id = rapl_get_cpu_model();
 	
-	if (cpu_id == 42 || cpu_id == 58) {
+	if (cpu_id == 0x2a || cpu_id == 0x3a)
 		return 0;
-	}
 	
 	return 1;
 }
