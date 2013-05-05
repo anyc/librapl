@@ -200,12 +200,34 @@ void rapl_get_raw_power_counters(int fd_msr, struct rapl_units * runits, struct 
 		pc->dram = -1;
 }
 
-void rapl_get_power_counters(int fd_msr, struct rapl_units * runits, struct rapl_power_counters * pc) {
-	struct rapl_raw_power_counters raw;
-	rapl_get_raw_power_counters(fd_msr, runits, &raw);
+void rapl_get_power_diff(int fd_msr, struct rapl_units * runits, 
+		struct rapl_raw_power_counters * start, struct rapl_raw_power_counters * stop,
+		struct rapl_power_diff * pd)
+{
+	if (rapl_pkg_available())
+		pd->pkg = stop->pkg - start->pkg;
+	else
+		pd->pkg = -1;
 	
-	memcpy(pc, &raw, sizeof(raw));
-	pc->uncore = pc->pkg - ( pc->cpu + pc->gpu );
+	if (rapl_pp0_available())
+		pd->cpu = stop->pp0 - start->pp0;
+	else
+		pd->cpu = -1;
+	
+	if (rapl_pp1_available())
+		pd->gpu = stop->pp1 - start->pp1;
+	else
+		pd->gpu = -1;
+	
+	if (rapl_dram_available())
+		pd->dram = stop->dram - start->dram;
+	else
+		pd->dram = -1;
+	
+	if (rapl_uncore_available())
+		pd->uncore = pd->pkg - ( pd->cpu + pd->gpu );
+	else
+		pd->uncore = -1;
 }
 
 void rapl_print_raw_power_counters (int fd_msr, struct rapl_units * runits) {

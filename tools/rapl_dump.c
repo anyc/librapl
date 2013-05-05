@@ -30,7 +30,9 @@ int main(int argc, char ** argv) {
 	char core;
 	char *mode;
 	int fd_msr;
-	struct rapl_power_counters last, curr;
+	struct rapl_raw_power_counters start, stop;
+	struct rapl_power_diff pd;
+	
 	time_t timer;
 	struct tm* tm_info;
 	char buf[32];
@@ -123,7 +125,7 @@ int main(int argc, char ** argv) {
 			count++;
 		}
 		
-		if (rapl_pkg_available() && rapl_pp0_available() && rapl_pp1_available()) {
+		if (rapl_uncore_available()) {
 			fprintf(f, "\"%s\" using 1:%d title \"Uncore\" with lines, ", dataname, count);
 			count++;
 		}
@@ -135,7 +137,7 @@ int main(int argc, char ** argv) {
 		f = fopen(dataname, "w+");
 	}
 	
-	rapl_get_power_counters(fd_msr, &runits, &last);
+	rapl_get_raw_power_counters(fd_msr, &runits, &start);
 	
 	seconds = 0;
 	while(1) {
@@ -149,22 +151,22 @@ int main(int argc, char ** argv) {
 			strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", tm_info);
 			printf("Time: %s\n", buf);
 			
-			rapl_get_power_counters(fd_msr, &runits, &curr);
+			rapl_get_raw_power_counters(fd_msr, &runits, &stop);
+			rapl_get_power_diff(fd_msr, &runits, &start, &stop, &pd);
+			start = stop;
 			
-			if (rapl_pkg_available())
-				printf("Package: %f J\n", curr.pkg - last.pkg);
-			if (rapl_pp0_available())
-				printf("CPU: %f J\n", curr.cpu - last.cpu);
-			if (rapl_pp1_available())
-				printf("GPU: %f J\n", curr.gpu - last.gpu);
-			if (rapl_dram_available())
-				printf("DRAM: %f J\n", curr.dram - last.dram);
-			if (rapl_uncore_available())
-				printf("Uncore: %f J\n", curr.uncore - last.uncore);
+			if (pd.pkg > -1)
+				printf("Package: %f J\n", pd.pkg);
+			if (pd.cpu > -1)
+				printf("CPU: %f J\n", pd.cpu);
+			if (pd.gpu > -1)
+				printf("GPU: %f J\n", pd.gpu);
+			if (pd.dram > -1)
+				printf("DRAM: %f J\n", pd.dram);
+			if (pd.uncore > -1)
+				printf("Uncore: %f J\n", pd.uncore);
 			
 			printf("\n");
-			
-			last = curr;
 		} else {
 			// we are in Gnuplot mode
 			
@@ -172,23 +174,23 @@ int main(int argc, char ** argv) {
 			seconds++;
 			fprintf(f, "%d ", seconds);
 			
-			rapl_get_power_counters(fd_msr, &runits, &curr);
+			rapl_get_raw_power_counters(fd_msr, &runits, &stop);
+			rapl_get_power_diff(fd_msr, &runits, &start, &stop, &pd);
+			start = stop;
 			
-			if (rapl_pkg_available())
-				fprintf(f, "%f ", curr.pkg - last.pkg);
-			if (rapl_pp0_available())
-				fprintf(f, "%f ", curr.cpu - last.cpu);
-			if (rapl_pp1_available())
-				fprintf(f, "%f ", curr.gpu - last.gpu);
-			if (rapl_dram_available())
-				fprintf(f, "%f ", curr.dram - last.dram);
-			if (rapl_uncore_available())
-				fprintf(f, "%f", curr.uncore - last.uncore);
+			if (pd.pkg > -1)
+				fprintf(f, "%f ", pd.pkg);
+			if (pd.cpu > -1)
+				fprintf(f, "%f ", pd.cpu);
+			if (pd.gpu > -1)
+				fprintf(f, "%f ", pd.gpu);
+			if (pd.dram > -1)
+				fprintf(f, "%f ", pd.dram);
+			if (pd.uncore > -1)
+				fprintf(f, "%f", pd.uncore);
 			
 			fprintf(f, "\n");
 			fflush(f);
-			
-			last = curr;
 		}
 		
 	}
