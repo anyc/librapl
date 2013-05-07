@@ -43,18 +43,14 @@ int rapl_open_msr(char core) {
 	if (fd_msr < 0) {
 		if (errno == ENXIO) {
 			fprintf(stderr, "no cpu core %d\n", core);
-			exit(2);
 		} else
 		if (errno == EIO) {
 			fprintf(stderr, "core %d doesn't support MSRs\n", core);
-			exit(3);
 		} else
 		if (errno == EACCES) {
 			fprintf(stderr, "Permission denied. On most systems you'll need root privileges for this application.\n");
-			exit(127);
 		}
 		perror("open msr failed");
-		exit(127);
 	}
 	return fd_msr;
 }
