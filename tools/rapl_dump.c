@@ -152,7 +152,7 @@ int main(int argc, char ** argv) {
 			printf("Time: %s\n", buf);
 			
 			rapl_get_raw_power_counters(fd_msr, &runits, &stop);
-			rapl_get_power_diff(fd_msr, &runits, &start, &stop, &pd);
+			rapl_get_power_diff(&start, &stop, &pd);
 			start = stop;
 			
 			if (pd.pkg > -1)
@@ -175,7 +175,7 @@ int main(int argc, char ** argv) {
 			fprintf(f, "%d ", seconds);
 			
 			rapl_get_raw_power_counters(fd_msr, &runits, &stop);
-			rapl_get_power_diff(fd_msr, &runits, &start, &stop, &pd);
+			rapl_get_power_diff(&start, &stop, &pd);
 			start = stop;
 			
 			if (pd.pkg > -1)

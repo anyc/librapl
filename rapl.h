@@ -111,8 +111,7 @@ int rapl_get_cpu_model();
 void rapl_get_raw_power_counters(int fd_msr, struct rapl_units * runits, struct rapl_raw_power_counters * pc);
 void rapl_print_raw_power_counters (int fd_msr, struct rapl_units * runits);
 
-void rapl_get_power_diff(int fd_msr, struct rapl_units * runits, 
-		struct rapl_raw_power_counters * start, struct rapl_raw_power_counters * stop,
+void rapl_get_power_diff(struct rapl_raw_power_counters * start, struct rapl_raw_power_counters * stop,
 		struct rapl_power_diff * pd);
 
 char rapl_pkg_available();

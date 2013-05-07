@@ -196,8 +196,7 @@ void rapl_get_raw_power_counters(int fd_msr, struct rapl_units * runits, struct 
 		pc->dram = -1;
 }
 
-void rapl_get_power_diff(int fd_msr, struct rapl_units * runits, 
-		struct rapl_raw_power_counters * start, struct rapl_raw_power_counters * stop,
+void rapl_get_power_diff(struct rapl_raw_power_counters * start, struct rapl_raw_power_counters * stop,
 		struct rapl_power_diff * pd)
 {
 	if (rapl_pkg_available())
