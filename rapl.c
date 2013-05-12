@@ -225,6 +225,14 @@ void rapl_get_power_diff(struct rapl_raw_power_counters * start, struct rapl_raw
 		pd->uncore = -1;
 }
 
+void rapl_print_power_diff(struct rapl_power_diff * pd) {
+	if (pd->pkg > -1) printf("Package: %f J\n", pd->pkg);
+	if (pd->cpu > -1) printf("CPU: %f J\n", pd->cpu);
+	if (pd->gpu > -1) printf("GPU: %f J\n", pd->gpu);
+	if (pd->dram > -1) printf("DRAM: %f J\n", pd->dram);
+	if (pd->uncore > -1) printf("Uncore: %f J\n", pd->uncore);
+}
+
 void rapl_print_raw_power_counters (int fd_msr, struct rapl_units * runits) {
 	RAPL_PRINT_ENERGY_STATUS(fd_msr, runits, MSR_PKG_ENERGY_STATUS);
 	RAPL_PRINT_ENERGY_STATUS(fd_msr, runits, MSR_PP0_ENERGY_STATUS);

@@ -10,7 +10,7 @@ values with a Gnuplot-friendly format in a file. Currently it
 provides the consumption of the package, the CPU and GPU as well
 as peripheral components (uncore).
 
-See [kicherer.org](https://kicherer.org/joomla/index.php/de/blog/liste/31-measuring-energy-consumption-with-librapl-on-sandy-ivybridge-processors)
+See [kicherer.org](http://kicherer.org/joomla/index.php/de/blog/liste/31-measuring-energy-consumption-with-librapl-on-sandy-ivybridge-processors)
 for an example created with Gnuplot.
 
 Status

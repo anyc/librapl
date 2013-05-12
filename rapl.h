@@ -114,6 +114,8 @@ void rapl_print_raw_power_counters (int fd_msr, struct rapl_units * runits);
 void rapl_get_power_diff(struct rapl_raw_power_counters * start, struct rapl_raw_power_counters * stop,
 		struct rapl_power_diff * pd);
 
+void rapl_print_power_diff(struct rapl_power_diff * pd);
+
 char rapl_pkg_available();
 char rapl_pp0_available();
 char rapl_pp1_available();
