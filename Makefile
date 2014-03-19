@@ -20,7 +20,7 @@ LIBCOMPLETE=$(LIBNAME).$(MAJOR).$(MINOR)
 all: $(LIBNAME)
 
 $(LIBNAME): rapl.o
-	$(CC) $(LDFLAGS) -Wl,-soname,$(LIBNAME).$(MAJOR) -shared $< -o $(LIBCOMPLETE)
+	$(CC) $(LDFLAGS) -Wl,-soname,$(LIBNAME).$(MAJOR) -shared $< $(LIBS) -o $(LIBCOMPLETE)
 	ln -s $(LIBCOMPLETE) $(LIBNAME).$(MAJOR)
 	ln -s $(LIBCOMPLETE) $(LIBNAME)
 
