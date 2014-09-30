@@ -165,6 +165,7 @@ char rapl_available() {
 			case 0x2a:
 			case 0x2d:
 			case 0x3a:
+			case 0x3e:
 				return 1;
 				break;
 		}
