@@ -106,8 +106,6 @@ void rapl_print_units(struct rapl_units * ru);
 char rapl_get_pkg_power_info(int fd_msr, struct rapl_units * ru, struct rapl_pkg_power_info * pinfo);
 void rapl_print_pkg_power_info(struct rapl_pkg_power_info * pinfo);
 
-int rapl_get_cpu_model();
-
 void rapl_get_raw_power_counters(int fd_msr, struct rapl_units * runits, struct rapl_raw_power_counters * pc);
 void rapl_print_raw_power_counters (int fd_msr, struct rapl_units * runits);
 
