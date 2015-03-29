@@ -6,7 +6,7 @@ incdir ?= include
 CC ?= gcc
 
 CFLAGS ?= -g -Wall -O2
-CFLAGS += -fPIC
+CFLAGS += -fPIC -Wredundant-decls
 
 LIBS=-lm
 
